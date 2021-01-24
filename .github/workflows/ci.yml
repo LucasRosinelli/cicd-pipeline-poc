@@ -5,49 +5,72 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Test application
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.405
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
+  # test:
+  #   name: Tests
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Test application
+  #       uses: actions/setup-dotnet@v1
+  #       with:
+  #         dotnet-version: 3.1.405
+  #     - name: Install dependencies
+  #       run: dotnet restore
+  #     - name: Test
+  #       run: dotnet test --no-restore --verbosity normal
 
   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.405
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-
-  quality:
-    name: SonarCloud
-    runs-on: windows-latest
-    steps:
       - uses: actions/checkout@v2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
         with:
-          fetch-depth: 0
-      - name: Install SonarCloud scanner
-        shell: powershell
-        run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-      - name: Build
-        shell: powershell
+          dotnet-version: 3.1.405
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal
+      - name: Quality
+        uses: Secbyte/dotnet-sonarscanner@v2.3
+        with:
+          buildCommand: dotnet build .
+          # testCommand: dotnet test .
+          projectKey: LucasRosinelli_cicd-pipeline-poc
+          projectName: cicd-pipeline-poc
+          sonarOrganisation: lucasrosinelli
+          sonarHostname: https://sonarcloud.io
+          beginArguments: >
+              /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+              /d:sonar.verbose="true"
+              /d:sonar.cs.opencover.reportsPaths='"/path/to/coverage.xml","/path/to/coverage.2.xml"'
+              /d:sonar.coverage.exclusions='"tests/*","**/*.cs","**/*.md"'
+          endArguments: >
+              /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
         env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"LucasRosinelli_cicd-pipeline-poc" /o:"lucasrosinelli" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          dotnet build ./LucasRosinelli.Pipeline.sln
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+  # quality:
+  #   name: SonarCloud
+  #   runs-on: windows-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Install SonarCloud scanner
+  #       shell: powershell
+  #       run: |
+  #         New-Item -Path .\.sonar\scanner -ItemType Directory
+  #         dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+  #     - name: Build
+  #       shell: powershell
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         .\.sonar\scanner\dotnet-sonarscanner begin /k:"LucasRosinelli_cicd-pipeline-poc" /o:"lucasrosinelli" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+  #         dotnet build ./LucasRosinelli.Pipeline.sln
+  #         .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
