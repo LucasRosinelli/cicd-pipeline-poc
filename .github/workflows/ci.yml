@@ -42,12 +42,9 @@ jobs:
           sonarOrganisation: lucasrosinelli
           sonarHostname: https://sonarcloud.io
           beginArguments: >
-              /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
               /d:sonar.verbose="true"
               /d:sonar.cs.opencover.reportsPaths='"/path/to/coverage.xml","/path/to/coverage.2.xml"'
               /d:sonar.coverage.exclusions='"tests/*","**/*.cs","**/*.md"'
-          endArguments: >
-              /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
