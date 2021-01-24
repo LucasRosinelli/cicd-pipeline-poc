@@ -31,7 +31,7 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
-  sonarCloud:
+  quality:
     name: SonarCloud
     runs-on: windows-latest
     steps:
