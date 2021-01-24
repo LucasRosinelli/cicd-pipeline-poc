@@ -14,9 +14,12 @@ namespace LucasRosinelli.Pipeline.Api.Tests.Controllers
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(-1)]
+        [InlineData(-301)]
+        [InlineData(-300)]
         [InlineData(-50)]
+        [InlineData(-1)]
+        [InlineData(0)]
+        [InlineData(301)]
         public void GeneratePassword_WithInvalidLength_ShouldReturnBadRequest(int length)
         {
             // Arrange
@@ -26,7 +29,7 @@ namespace LucasRosinelli.Pipeline.Api.Tests.Controllers
 
             // Assert
             var objectResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("The length must be greater than zero.", objectResult.Value);
+            Assert.Equal("The length must be greater than or equal to 1 and less than or equal to 300.", objectResult.Value);
         }
 
         [Theory]
@@ -34,8 +37,7 @@ namespace LucasRosinelli.Pipeline.Api.Tests.Controllers
         [InlineData(5)]
         [InlineData(10)]
         [InlineData(50)]
-        [InlineData(500)]
-        [InlineData(8000)]
+        [InlineData(300)]
         public void GeneratePassword_WithValidLength_ShouldSucceed(int length)
         {
             // Arrange
