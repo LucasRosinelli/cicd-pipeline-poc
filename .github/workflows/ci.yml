@@ -16,22 +16,22 @@ jobs:
           dotnet-version: 3.1.405
       - name: Install dependencies
         run: dotnet restore
-      # - name: Test
-      #   run: dotnet test --no-restore --verbosity normal
-      # - name: Quality
-      #   uses: Secbyte/dotnet-sonarscanner@v2.3
-      #   with:
-      #     buildCommand: dotnet build .
-      #     projectKey: LucasRosinelli_cicd-pipeline-poc
-      #     projectName: cicd-pipeline-poc
-      #     sonarOrganisation: lucasrosinelli
-      #     sonarHostname: https://sonarcloud.io
-      #     beginArguments: >
-      #         /d:sonar.verbose="true"
-      #         /d:sonar.cs.opencover.reportsPaths='"/coverage.xml"'
-      #         /d:sonar.coverage.exclusions='"tests/**","**/*.cs","**/*.md"'
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal
       - name: Build
         run: dotnet build --configuration Release --no-restore
+      - name: Quality
+        uses: Secbyte/dotnet-sonarscanner@v2.3
+        with:
+          buildCommand: dotnet build .
+          projectKey: LucasRosinelli_cicd-pipeline-poc
+          projectName: cicd-pipeline-poc
+          sonarOrganisation: lucasrosinelli
+          sonarHostname: https://sonarcloud.io
+          beginArguments: >
+              /d:sonar.verbose="true"
+              /d:sonar.cs.opencover.reportsPaths='"/coverage.xml"'
+              /d:sonar.coverage.exclusions='"tests/**","**/*.cs","**/*.md"'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
