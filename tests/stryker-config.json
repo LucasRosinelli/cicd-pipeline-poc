@@ -1,0 +1,32 @@
+{
+    "stryker-config": {
+        "reporters": [
+            "progress",
+            "html"
+        ],
+        "log-level": "debug",
+        "log-file": true,
+        "timeout-ms": 10000,
+        "project-file": "LucasRosinelli.Pipeline.Api.csproj",
+        "max-concurrent-test-runners": 4,
+        "threshold-high": 80,
+        "threshold-low": 70,
+        "threshold-break": 60,
+        "mutation-level": "Standard",
+        "mutate": [
+            "!**/Program.cs",
+            "!**/Startup.cs"
+        ],
+        "excluded-mutations": [
+        ],
+        "ignore-methods": [
+            "*Log*",
+            "ToString",
+            "*HashCode*"
+        ],
+        "dashboard-compare": false,
+        "baseline-storage-location": "AzureFileStorage",
+        "azure-storage-url": "https://storageaccount.file.core.windows.net/sharename",
+        "azure-storage-sas": "<SAS>"
+    }
+}
