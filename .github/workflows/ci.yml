@@ -19,10 +19,10 @@ jobs:
       - name: Test
         run: dotnet test --no-restore --verbosity normal
       - name: Test Mutator
-        run: >
-          dotnet tool install --tool-path ./tools dotnet-stryker
-          cd ./tests/LucasRosinelli.Pipeline.Api.Tests/
-          ../../tools/dotnet-stryker --config-file-path ../stryker-config.json
+        run: |
+          dotnet tool install --tool-path ./tools dotnet-stryker \
+          && cd ./tests/LucasRosinelli.Pipeline.Api.Tests/ \
+          && ../../tools/dotnet-stryker --config-file-path ../stryker-config.json
       - name: Build
         run: dotnet build --configuration Release --no-restore
       - name: Quality
